@@ -1,60 +1,73 @@
-from heapq import heappop, heappush
+import heapq
 
 def h(state):
     dist = 0
-    tp = {'1': (0, 0),'2': (0, 1),'3': (0, 2),'4': (1, 0),'5': (1, 1),'6': (1, 2),'7': (2, 0),'8': (2, 1),'x': (2, 2)}
-
-    for i in range(len(state)):
-        char = state[i]
-        x = i // 3 
-        y = i % 3  
-        tx, ty = tp[char]
-        dist += abs(x - tx) + abs(y - ty)
+    for i in range(9):
+        if state[i] != 'x':
+            num = int(state[i]) - 1
+            target_x, target_y = num // 3, num % 3
+            x, y = i // 3, i % 3
+            dist += abs(x - target_x) + abs(y - target_y)
     return dist
 
 def astar(start):
-    directions = {'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1)}
-    queue = [(h(start), 0,  start, "")]
-    states = {start}
+    dist, prev = {}, {}
+    heap = []
+    dist[start] = 0
+    heapq.heappush(heap, (h(start), start))
+    end="12345678x"
+    directions = [(-1, 0, 'u'), (0, 1, 'r'), (1, 0, 'd'), (0, -1, 'l')]
 
-    while queue:
-        hh, steps,state, path = heappop(queue)
+    while heap:
+        _, state = heapq.heappop(heap)
 
-        if state == '12345678x':
-            return path  
-        x_index = state.index('x')
-        x, y = x_index // 3, x_index % 3
+        if state == end:
+            break
 
-        for move, (dx, dy) in directions.items():
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < 3 and 0 <= ny < 3:
-                nx_index = nx * 3 + ny
+        x, y = 0, 0
+        for i in range(9):
+            if state[i] == 'x':
+                x, y = i // 3, i % 3
+                break
+        for dx,dy,moves in directions:
+            a, b = x + dx, y + dy
+            if 0 <= a < 3 and 0 <= b < 3:
+                nx_index = a * 3 + b
+                x_index = x * 3 + y
                 state_list = list(state)
                 state_list[x_index], state_list[nx_index] = state_list[nx_index], state_list[x_index]
                 new_state = ''.join(state_list)
+                
+                if new_state not in dist or dist[new_state] > dist[state] + 1:
+                    dist[new_state] = dist[state] + 1
+                    prev[new_state] = (moves, state)
+                    heapq.heappush(heap, (dist[new_state] + h(new_state), new_state))
 
-                if new_state not in states:
-                    states.add(new_state)
-                    heappush(queue, (steps + 1 + h(new_state), steps + 1,  new_state, path + move))
+    res, current = "", end
+    while current != start:
+        if current in prev:
+            move, prev_state = prev[current]
+            res += move
+            current = prev_state
+        else:
+            return "unsolvable"
+    
+    return res[::-1]  
 
-    return "unsolvable"  
-
-def countin(li):
-    li.remove('x') 
+def countin(seq):
     count = 0
-    for i in range(len(li)):
-        for j in range(i + 1, len(li)):
-            if li[i] > li[j]:
+    for i in range(8):  
+        for j in range(i + 1, 8):
+            if seq[i] > seq[j]:
                 count += 1
     return count
 
 li = input().split()
-a2= li.copy()
-rx = 3-(li.index('x')//3)
-inv_count = countin(li)
-if (inv_count + rx) % 2 == 0:
-    start = ''.join(a2)  
+start = ''.join(li)
+seq = start.replace('x', '') 
+inv_count = countin(seq)
+
+if inv_count % 2 == 0:
     print(astar(start))
 else:
     print("unsolvable")
-
