@@ -24,11 +24,8 @@ def astar(start):
         if state == end:
             break
 
-        x, y = 0, 0
-        for i in range(9):
-            if state[i] == 'x':
-                x, y = i // 3, i % 3
-                break
+        idx = state.index('x')
+        x, y = idx // 3, idx % 3
         for dx,dy,moves in directions:
             a, b = x + dx, y + dy
             if 0 <= a < 3 and 0 <= b < 3:
@@ -43,29 +40,29 @@ def astar(start):
                     prev[new_state] = (moves, state)
                     heapq.heappush(heap, (dist[new_state] + h(new_state), new_state))
 
-    res, current = "", end
+    road, current = "", end
     while current != start:
         if current in prev:
             move, prev_state = prev[current]
-            res += move
+            road += move
             current = prev_state
         else:
             return "unsolvable"
     
-    return res[::-1]  
+    return road[::-1]  
 
-def countin(seq):
+def countin(co):
     count = 0
     for i in range(8):  
         for j in range(i + 1, 8):
-            if seq[i] > seq[j]:
+            if co[i] > co[j]:
                 count += 1
     return count
 
 li = input().split()
 start = ''.join(li)
-seq = start.replace('x', '') 
-inv_count = countin(seq)
+co = start.replace('x', '') 
+inv_count = countin(co)
 
 if inv_count % 2 == 0:
     print(astar(start))

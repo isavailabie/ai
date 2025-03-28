@@ -27,20 +27,23 @@ def bfs(start):
 
     return -1
 
-def countin(seq):
+
+def countin(co):
     count = 0
     for i in range(8):  
         for j in range(i + 1, 8):
-            if seq[i] > seq[j]:
+            if co[i] > co[j]:
                 count += 1
     return count
 
 li = input().split()
 start = ''.join(li)
-seq = start.replace('x', '') 
-inv_count = countin(seq)
+co = start.replace('x', '') 
+inv_count = countin(co)
 
 if inv_count % 2 == 0:
     print(bfs(start))
 else:
     print("-1")
+
+
