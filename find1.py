@@ -13,8 +13,8 @@ def fpath(n, edges):
                 queue.append(neighbor)  
     return juli[n] 
 
-n, m = input().split()
-n, m = int(n), int(m)
+
+n, m = map(int, input().split())
 
 if n == 0:
     print(-1)

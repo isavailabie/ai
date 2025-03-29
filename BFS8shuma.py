@@ -40,7 +40,6 @@ li = input().split()
 start = ''.join(li)
 co = start.replace('x', '') 
 inv_count = countin(co)
-
 if inv_count % 2 == 0:
     print(bfs(start))
 else:

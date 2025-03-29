@@ -7,11 +7,9 @@ def countin(co):
     return count
 
 li = input().split()
-start = ''.join(li)
-co = start.replace('x', '') 
-inv_count = countin(co)
-
-if inv_count % 2 == 0:
+li.remove('x')  
+incount = countin(li)
+if incount % 2 == 0:
     print(1)
 else:
     print(0)
